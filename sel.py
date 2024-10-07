@@ -85,7 +85,11 @@ def convert_docs_to_pdf(download_dir):
                     print(f"Converted {filename} to PDF")
                 except Exception as e:
                     print(f"Error converting {filename}: {str(e)}")
-                finally:
+                
+    except Exception as e:
+        print(e)
+        
+    finally:
                     for filename in os.listdir(download_dir):
                         if filename.endswith((".doc", ".docx")):
                             file_path = os.path.join(download_dir, filename)
@@ -94,16 +98,11 @@ def convert_docs_to_pdf(download_dir):
                                 print(f"Deleted {filename}")
                             except Exception as e:
                                 print(f"Error deleting {filename}: {str(e)}")
-    except Exception as e:
-        print(e)
-
     word.Quit()
     pythoncom.CoUninitialize()
 
 
 if __name__ == '__main__':
-    scrape_and_download(max_pages=2)
+    scrape_and_download(max_pages=5)
     download_dir = os.path.join(os.getcwd(), "downloads")
     convert_docs_to_pdf(download_dir)
-
-    
