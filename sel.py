@@ -2,12 +2,14 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.chrome.service import Service
+from webdriver_manager.chrome import ChromeDriverManager
 import time
 import os
 import win32com.client
 import pythoncom
 
-def scrape_and_download(max_pages):
+def scrape_and_download(max_pages, committee_list):
     options = webdriver.ChromeOptions()
     options.add_argument('--ignore-certificate-errors')
     options.add_argument('--ignore-ssl-errors')
@@ -25,48 +27,55 @@ def scrape_and_download(max_pages):
         "download.directory_upgrade": True,
         "safebrowsing.enabled": True
     })
-
-    driver = webdriver.Chrome(options=options)
+    driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
+    #driver = webdriver.Chrome(options=options)
     
+    for committe in committee_list:
     # Open the initial page
-    driver.get("https://main.knesset.gov.il/Activity/Committees/Finance/Pages/CommitteeProtocols.aspx")  
+        try:
+            time.sleep(5)
+            driver.get(f"https://main.knesset.gov.il/Activity/Committees/{committe}/Pages/CommitteeProtocols.aspx")  
+        
+        except Exception as e:
+            print(f"An error occurred: {e}")
 
-    page_count = 0
+        page_count = 0
 
-    try:
-        while page_count < max_pages:
-            # Wait for links to be present
-            links = WebDriverWait(driver, 10).until(
-                EC.presence_of_all_elements_located((By.XPATH, "//a[starts-with(@href, 'https://fs.knesset.gov.il')]"))
-            )
-            
-            for link in links:
-                href = link.get_attribute('href')
-                file_name = href.split('/')[-1]
-                
-                # Use JavaScript to click the link
-                driver.execute_script("arguments[0].click();", link)
-                
-                # Wait for download to complete
-
-            page_count += 1
-            
-            if page_count < max_pages:
-                # Find and click the "Next" button
-                next_button = WebDriverWait(driver, 10).until(
-                    EC.element_to_be_clickable((By.ID, "ctl00_ctl62_g_1ca37dc9_1e14_4b89_aaae_903a30d4c039_ctl00_lnkbtnNext1"))
+        try:
+            while page_count < max_pages:
+                # Wait for links to be present
+                links = WebDriverWait(driver, 10).until(
+                    EC.presence_of_all_elements_located((By.XPATH, "//a[starts-with(@href, 'https://fs.knesset.gov.il')]"))
                 )
-                next_button.click()
                 
-                # Wait for the page to load
-                time.sleep(10)
+                for link in links:
+                    href = link.get_attribute('href')
+                    file_name = href.split('/')[-1]
+                    
+                    # Use JavaScript to click the link
+                    driver.execute_script("arguments[0].click();", link)
+                    
+                    # Wait for download to complete
 
-    except Exception as e:
-        print(f"An error occurred: {e}")
-    finally:
-        # Keep the browser open
-        input("Press Enter to close the browser...")
-        driver.quit()
+                page_count += 1
+                
+                if page_count < max_pages:
+                    # Find and click the "Next" button
+                    next_button = WebDriverWait(driver, 10).until(
+                        EC.element_to_be_clickable((By.ID, "ctl00_ctl62_g_1ca37dc9_1e14_4b89_aaae_903a30d4c039_ctl00_lnkbtnNext1"))
+                    )
+                    next_button.click()
+                    
+                    # Wait for the page to load
+                    time.sleep(10)
+
+        except Exception as e:
+            print(f"An error occurred: {e}")
+        finally:
+            # Keep the browser open
+            print("done")
+     # closing the driver       
+    driver.quit()    
 
 def convert_docs_to_pdf(download_dir):
     pythoncom.CoInitialize()
@@ -103,6 +112,7 @@ def convert_docs_to_pdf(download_dir):
 
 
 if __name__ == '__main__':
-    scrape_and_download(max_pages=5)
+    committee_list=['Health','Immigration', 'Finance']
+    scrape_and_download(max_pages=1, committee_list=committee_list)
     download_dir = os.path.join(os.getcwd(), "downloads")
     convert_docs_to_pdf(download_dir)
