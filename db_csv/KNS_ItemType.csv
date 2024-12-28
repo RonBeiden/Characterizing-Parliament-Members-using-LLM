@@ -1,0 +1,11 @@
+"ItemTypeID","Desc","TableName"
+1,שאילתה,KNS_Query
+2,הצעת חוק,KNS_Bill
+3,הצעת אי אמון,
+4,הצעה לסדר היום,KNS_Agenda
+5,ישיבת מליאה,KNS_PlenumSession
+12,ישיבת ועדה,KNS_CommitteSession
+6000,פעולה על פי חוק,KNS_Law
+6001,תיקון טעות,KNS_Law
+6002,חוק בן חיצוני,KNS_Law
+6003,חוק אב,KNS_IsraelLaw
