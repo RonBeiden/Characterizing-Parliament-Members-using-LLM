@@ -158,4 +158,4 @@ def RAG(KNS_member, query):
     results = retriever(query, KNS_member)
     return results
 
-vector_db(retrieve_quotes_of_KNS_member('מירי רגב'), 'Miri_Regev')
+# vector_db(retrieve_quotes_of_KNS_member('מירי רגב'), 'Miri_Regev')
