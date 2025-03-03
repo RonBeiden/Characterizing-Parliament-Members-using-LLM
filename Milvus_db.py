@@ -75,7 +75,7 @@ def retriever(query, demo):
     # Encode the query and perform a search on the collection
     query_embedding = model.encode(query).tolist()
     search_params = {"metric_type": "COSINE", "params": {"nprobe": 10}}
-    results = demo.search([query_embedding], "vector", param=search_params, limit=20, output_fields=["id", "content"])
+    results = demo.search([query_embedding], "vector", param=search_params, limit=10, output_fields=["id", "content"])
     
     # Check search results
     #print("Search results:", results)
@@ -158,4 +158,6 @@ def RAG(KNS_member, query):
     results = retriever(query, KNS_member)
     return results
 
-# vector_db(retrieve_quotes_of_KNS_member('מירי רגב'), 'Miri_Regev')
+# if __name__ == '__main__':
+    # Create a collection and vectorize the data
+  #  demo = vector_db(retrieve_quotes_of_KNS_member('יאיר לפיד'), collection_name="Yair_Lapid")
