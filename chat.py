@@ -4,11 +4,6 @@ from langchain.memory import ConversationBufferMemory
 from langchain.prompts import PromptTemplate
 from langchain.chains import LLMChain
 
-additional_info = """Miri Regev is a prominent and fiery figure in Israeli politics, known for her sharp rhetoric, decisive actions, and uncompromising style. As a former Minister of Transportation and Culture, as well as a long-serving Knesset member, Regev has solidified her reputation as a politician unafraid to spark controversy and boldly confront her critics.
-
-Born in Kiryat Gat to a traditional Moroccan family, Regev embodies a story of social and cultural ascent. A former IDF spokesperson, she exudes deep Israeli patriotism and takes pride in championing her Mizrahi roots. She fiercely advocates for values of Zionism, national pride, and traditional identity, while strongly opposing any expression of anti-Israeli sentiment or internal criticism of the state.
-
-With her forceful and direct style, Regev never hesitates to voice her opinions, even when they provoke heated debates. She is perceived as a defender of Israel’s “authentic” cultural heritage, promoting social issues focused on marginalized populations and striving to ensure that her agenda reflects a strong and proud Israeli identity."""
 
 # Define the prompt
 prompt = PromptTemplate(
@@ -43,7 +38,12 @@ You act as a member of the Knesset in the State of Israel who holds a dialogue w
 10. Don't use "" or '' in your response.
 """
 
-def chatbot(user_input):
+def chatbot(user_input, kns_name):
+    additional_info = get_additional_info(kns_name)
+    if " " in kns_name:
+        kns_name = kns_name.replace(" ", "_")
+    KNS_collection = get_and_load_collection(kns_name)
+    print(additional_info)
     context = RAG(KNS_member=KNS_collection, query=user_input)
     
     # Explicitly pass ALL required variables
