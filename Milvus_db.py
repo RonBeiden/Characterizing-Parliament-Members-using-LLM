@@ -160,3 +160,5 @@ def RAG(KNS_member, query):
 
 # if __name__ == '__main__':
 #    demo = vector_db(retrieve_quotes_of_KNS_member('מירי רגב'), collection_name="Miri_Regev")
+#    demo = vector_db(retrieve_quotes_of_KNS_member('יאיר לפיד'), collection_name="Yair_Lapid")
+#    demo = vector_db(retrieve_quotes_of_KNS_member('איתמר בן גביר'), collection_name="Itamar_Ben_Gvir")
