@@ -7,11 +7,11 @@ def page_one():
     
     # Image files (replace with actual paths)
     image_paths = [
-        "KNS_members_images/Miri_Regev.jpg",
-        "KNS_members_images/Yair_Lapid.jpg",
-        "KNS_members_images/Itamar_Ben_Gvir.jpg",
-        "KNS_members_images/Benjamin_Netanyahu.jpg",
-        "KNS_members_images/Benny_Gantz.jpg"
+        "../KNS_members_images/Miri_Regev.jpg",
+        "../KNS_members_images/Yair_Lapid.jpg",
+        "../KNS_members_images/Itamar_Ben_Gvir.jpg",
+        "../KNS_members_images/Benjamin_Netanyahu.jpg",
+        "../KNS_members_images/Benny_Gantz.jpg"
     ]
     names = ["Miri Regev", "Yair Lapid", "Itamar Ben Gvir", "Benjamin Netanyahu", "Benny Gantz"]
     
