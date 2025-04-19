@@ -3,8 +3,29 @@ from langchain.chains import ConversationChain
 from langchain.memory import ConversationBufferMemory
 from langchain.prompts import PromptTemplate
 from langchain.chains import LLMChain
+from tavily import TavilyClient
 
+Rephrase_prompt = PromptTemplate(
+        input_variables=["chat_history", "human_input", "context", "kns_name"],
+        template="""
+        You are tasked with rephrasing a user's query to ensure it is clear, concise, and includes all necessary context for another LLM to understand.
+        add the name of the Knesset member to the rephrased query, like a user asked a question to the Knesset member.
+        for example: "What is your opinion on the new law?" should be rephrased to "What is the opinion of {kns_name} on the new law?".
 
+        Follow these guidelines:
+        1. Maintain the original intent of the user's query.  
+        3. Ensure the rephrased query is in Hebrew.  
+        4. Avoid adding any unnecessary details or assumptions.  
+        5. Use a formal and professional tone.  
+
+        Context: {context}  
+        The Knesset member name: {kns_name}
+        Chat History: {chat_history}  
+
+        Original Query: {human_input}  
+        Rephrased Query:"""
+    )
+  
 # Define the prompt
 prompt = PromptTemplate(
     input_variables=["chat_history", "human_input", "context", "kns_name","additional_info"],
@@ -22,12 +43,19 @@ prompt = PromptTemplate(
     10. Don't use "" or '' in your response.
     Respond to the human's question using the following quotes attributed to you. 
     Adopt {kns_name}'s tone, style, and commonly used language.\nAdditiomnal information aboot {kns_name}:{additional_info}\n
+    \n\n
     Context: {context}\n\nChat History: {chat_history}\n\nHuman: {human_input}\nAI:"""
 )
 
 # Memory configuration
 memory = ConversationBufferMemory(input_key="human_input", memory_key="chat_history")
 
+conversation_for_Tavily = LLMChain(
+    llm=llm,
+    memory=memory,
+    prompt=Rephrase_prompt,
+    verbose=True  # Add verbose for debugging
+)
 # Define the ConversationChain
 conversation = LLMChain(
     llm=llm,
@@ -44,6 +72,31 @@ def chatbot(user_input, kns_name):
     print(additional_info)
     context = RAG(KNS_member=KNS_collection, query=user_input)
     
+
+    question_for_tavily = conversation_for_Tavily.run(
+        human_input=user_input,
+        context=context,
+        kns_name=kns_name,
+        additional_info=additional_info,
+        chat_history=memory.load_memory_variables({}).get("chat_history", ""),
+    )
+    print(f"Question for Tavily: {question_for_tavily}")
+
+    tavily_client = TavilyClient(api_key=os.getenv("TAVILY_API_KEY"))
+    # Perform the search using Tavily
+    response = tavily_client.search(question_for_tavily, include_answer=True)
+
+    # Use the response from Tavily to get the final answer
+    Tavily_answer = response['answer']
+
+    # Add Tavily_answer to the context
+    if Tavily_answer:
+        context = f"{context}\n\nHere is an LLM-generated answer based on an internet search. Take it into account along with the quotes and the Knesset member's background: {Tavily_answer}\n\n"
+
+    else:
+        # If Tavily_answer is empty, just use the original context
+        context = f"{context}\n\n"
+
     # Explicitly pass ALL required variables
     response = conversation.run(
         human_input=user_input,
