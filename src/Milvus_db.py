@@ -93,30 +93,49 @@ def retriever(query, demo):
 
 
 
-def retrive_quotes(KNS_name):
+def retrive_quotes(KNS_name, knesset_number):
 
     es = Elasticsearch(f'http://{elastic_ip}', basic_auth=(es_username, es_password), request_timeout=500)
     data_q =[]
     # Query definition
-    query = {
-        "query": {
-            "bool": {
-                "must": [
-                    {"match": {"speaker_name": KNS_name}}
-                ],
-                "filter": {
-                    "script": {
+    if knesset_number is not None:
+        query = {
+            "query": {
+                "bool": {
+                    "must": [
+                        {"match": {"speaker_name": KNS_name}},
+                        {"match": {"knesset_number": knesset_number}}
+                    ],
+                    "filter": {
                         "script": {
-                            "source": "doc['sentence_text.keyword'].size() > 0 && doc['sentence_text.keyword'].value.length() > 30"
+                            "script": {
+                                "source": "doc['sentence_text.keyword'].size() > 0 && doc['sentence_text.keyword'].value.length() > 30"
+                            }
                         }
                     }
                 }
             }
         }
-    }
+    else:
+        query = {
+            "query": {
+                "bool": {
+                    "must": [
+                        {"match": {"speaker_name": KNS_name}}
+                    ],
+                    "filter": {
+                        "script": {
+                            "script": {
+                                "source": "doc['sentence_text.keyword'].size() > 0 && doc['sentence_text.keyword'].value.length() > 30"
+                            }
+                        }
+                    }
+                }
+            }
+        }
 
     # Initialize scroll
-    resp = es.search(index="all_features_sentences", body=query, scroll="2m", size=1000)
+    resp = es.search(index="all_features_sentences", body=query, scroll="2m", size=4000)
 
     # Retrieve the scroll ID and first batch of hits
     scroll_id = resp['_scroll_id']
@@ -145,8 +164,8 @@ def retrive_quotes(KNS_name):
     return data_q
 
 
-def retrieve_quotes_of_KNS_member(name):
-    data = retrive_quotes(name)
+def retrieve_quotes_of_KNS_member(name, knesset_number=None):
+    data = retrive_quotes(name, knesset_number)
     return data
 
 def get_and_load_collection(name):
@@ -158,8 +177,8 @@ def RAG(KNS_member, query):
     results = retriever(query, KNS_member)
     return results
 
-# if __name__ == '__main__':
-#    demo = vector_db(retrieve_quotes_of_KNS_member('מירי רגב'), collection_name="Miri_Regev")
+if __name__ == '__main__':
+   demo = vector_db(retrieve_quotes_of_KNS_member('מירי רגב', knesset_number="24"), collection_name="Miri_Regev_24")
 #    demo = vector_db(retrieve_quotes_of_KNS_member('יאיר לפיד'), collection_name="Yair_Lapid")
 #    demo = vector_db(retrieve_quotes_of_KNS_member('איתמר בן גביר'), collection_name="Itamar_Ben_Gvir")
 #    demo = vector_db(retrieve_quotes_of_KNS_member('בנימין נתניהו'), collection_name="Benjamin_Netanyahu")

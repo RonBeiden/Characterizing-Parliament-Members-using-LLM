@@ -41,6 +41,7 @@ prompt = PromptTemplate(
     8. If someone said hello to you, you should respond with a greeting.
     9. Don't add ':' or any other punctuation at your response.
     10. Don't use "" or '' in your response.
+    11. Don't mention any time or date in your response, event no time related words like 'today', 'now', 'tomorrow', 'after holidays' etc.
     Respond to the human's question using the following quotes attributed to you. 
     Adopt {kns_name}'s tone, style, and commonly used language.\nAdditiomnal information aboot {kns_name}:{additional_info}\n
     \n\n
@@ -65,7 +66,7 @@ conversation = LLMChain(
 )
 
 def chatbot(user_input, kns_name):
-    additional_info = get_additional_info(kns_name)
+    additional_info = get_additional_info(kns_name[:-3])
     if " " in kns_name:
         kns_name = kns_name.replace(" ", "_")
     KNS_collection = get_and_load_collection(kns_name)
@@ -76,7 +77,7 @@ def chatbot(user_input, kns_name):
     question_for_tavily = conversation_for_Tavily.run(
         human_input=user_input,
         context=context,
-        kns_name=kns_name,
+        kns_name=kns_name[:-3],
         additional_info=additional_info,
         chat_history=memory.load_memory_variables({}).get("chat_history", ""),
     )
@@ -101,7 +102,7 @@ def chatbot(user_input, kns_name):
     response = conversation.run(
         human_input=user_input,
         context=context,
-        kns_name=kns_name,
+        kns_name=kns_name[:-3],
         additional_info=additional_info,
         chat_history=memory.load_memory_variables({}).get("chat_history", ""),
     )

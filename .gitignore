@@ -72,3 +72,6 @@ out/
 
 # Other
 !.gitignore
+
+# Milvus data directory
+Milvus_data/
