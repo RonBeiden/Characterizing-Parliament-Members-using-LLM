@@ -3,19 +3,6 @@ from chat import *  # Importing the chatbot-related functions
 from dotenv import load_dotenv
 import pyodbc
 load_dotenv()  # Load environment variables from .env file
-def get_knesset_numbers(name):
-    conn = pyodbc.connect(
-        "Driver={SQL Server};"
-        "Server=your_server_name;"
-        "Database=your_database_name;"
-        "Trusted_Connection=yes;"
-    )
-    cursor = conn.cursor()
-    query = "SELECT kns_number FROM kns_numbers WHERE name = ?"
-    cursor.execute(query, name)
-    result = [row[0] for row in cursor.fetchall()]
-    conn.close()
-    return result
 
 def page_one():
     st.title("Choose a Knesset Member")
@@ -57,12 +44,12 @@ def page_two():
     else:
         display_name = st.session_state.selected_name
 
-    st.title(f"Chatbot with {display_name}")
+    st.title(f"Chat with {display_name}")
     # Select Knesset number (only once)
     if "knesset_number_selected" not in st.session_state:
         knesset_number = st.selectbox(
             "Select Knesset Number",
-            options=["All", 20, 21, 22, 23, 24]
+            options=get_knesset_numbers(display_name)
         )
         if st.button("Confirm Selection"):
             selected_number = "all" if knesset_number == "All" else str(knesset_number)
@@ -108,50 +95,6 @@ def page_two():
             if key in st.session_state:
                 del st.session_state[key]
         st.experimental_rerun()
-
-# Page 2 - Chatbot page
-# def page_two():
-#     st.title(f"Chatbot with {st.session_state.selected_name}")
-    
-#     if 'messages' not in st.session_state:
-#         st.session_state.messages = []
-#     if 'conversation_count' not in st.session_state:
-#         st.session_state.conversation_count = 0
-    
-#     # Display chat messages
-#     for message in st.session_state.messages:
-#         with st.chat_message(message["role"]):
-#             st.markdown(message["content"])
-
-#     # Chat input
-#     if prompt := st.chat_input("What is your question?"):
-#         st.session_state.messages.append({"role": "user", "content": prompt})
-#         with st.chat_message("user"):
-#             st.markdown(prompt)
-
-#         response = chatbot(prompt, st.session_state.selected_name)
-#         with st.chat_message("assistant"):
-#             st.markdown(response)
-#         st.session_state.messages.append({"role": "assistant", "content": response})
-
-#         st.session_state.conversation_count += 1
-#         if st.session_state.conversation_count % 10 == 0:
-#             conversation = "\n".join([f"{m['role']}: {m['content']}" for m in st.session_state.messages[-20:]])
-#             summary = summarize_conversation(conversation)
-#             memory.chat_memory.add_user_message("Previous conversation summary")
-#             memory.chat_memory.add_ai_message(summary)
-#             st.session_state.messages = [{"role": "system", "content": f"Conversation summary: {summary}"}]
-
-#     # "Go Back" button that clears session state and restarts session
-#     if st.button("⬅️ Go Back"):
-#         # Reset chat history and selected member explicitly
-#         keys_to_clear = ["selected_name", "messages", "conversation_count"]
-#         memory.chat_memory.clear()
-#         for key in keys_to_clear:
-#             if key in st.session_state:
-#                 del st.session_state[key]  # Remove specific keys
-
-#         st.experimental_rerun()  # Ensure the UI updates
 
 def main():
     if 'selected_name' not in st.session_state:

@@ -33,3 +33,18 @@ def get_additional_info(kns_name):
     conn.close()
     return descriptions
 
+def get_knesset_numbers(kns_name):
+    conn = pyodbc.connect(
+        'DRIVER={ODBC Driver 17 for SQL Server};'
+        'SERVER=DESKTOP-9LFS960\SQLEXPRESS;'
+        'DATABASE=KNS_Description;'
+        'Trusted_Connection=yes'
+    )
+    cursor = conn.cursor()
+    query = "SELECT knesset_seat FROM kns_members WHERE kns_name = ?"
+    cursor.execute(query, kns_name)
+    seats = [row[0] for row in cursor.fetchall()]
+    result = [int(x) for x in seats[0].split(',')]
+    result.insert(0, "All")
+    conn.close()
+    return result
