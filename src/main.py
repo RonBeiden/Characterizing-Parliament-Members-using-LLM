@@ -46,10 +46,12 @@ def page_two():
 
     st.title(f"Chat with {display_name}")
     # Select Knesset number (only once)
+    kns_nums = get_knesset_numbers(display_name)
+    kns_nums.insert(0, "All")  # Add "All" option to the list
     if "knesset_number_selected" not in st.session_state:
         knesset_number = st.selectbox(
             "Select Knesset Number",
-            options=get_knesset_numbers(display_name)
+            options=kns_nums
         )
         if st.button("Confirm Selection"):
             selected_number = "all" if knesset_number == "All" else str(knesset_number)
