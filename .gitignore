@@ -11,6 +11,9 @@ __pycache__/
 dist/
 build/
 *.env
+env/
+venv/
+.venv/
 
 # Java
 *.class
@@ -69,3 +72,6 @@ out/
 
 # Other
 !.gitignore
+
+# Milvus data directory
+Milvus_data/
