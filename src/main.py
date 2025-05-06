@@ -29,23 +29,32 @@ def page_one():
     # Create equal columns based on the number of names
     cols = st.columns(len(names))
     
-    # Add CSS for equal button sizes
+    cols_per_row = 5
+
+    # Add CSS for uniform buttons
     button_style = """
     <style>
     .stButton button {
         width: 100%;
-        height: 80px;  /* Adjust the height as needed */
+        height: 80px;
     }
     </style>
     """
     st.markdown(button_style, unsafe_allow_html=True)
 
-    for i, col in enumerate(cols):
-        with col:
-            st.image(image_paths[i], width=100, caption=names[i], use_column_width=True)
-            if st.button(f"{names[i]}"):
-                st.session_state.selected_name = names[i]
-                st.experimental_rerun()
+    # Loop through items and display in grid layout
+    for i in range(0, len(names), cols_per_row):
+        row_images = image_paths[i:i+cols_per_row]
+        row_names = names[i:i+cols_per_row]
+        cols = st.columns(cols_per_row)
+
+        for j, col in enumerate(cols):
+            if j < len(row_images):
+                with col:
+                    st.image(row_images[j], width=100, caption=row_names[j], use_column_width=True)
+                    if st.button(row_names[j]):
+                        st.session_state.selected_name = row_names[j]
+                        st.experimental_rerun()
 
 def page_two():
     if st.session_state.selected_name[-1].isdigit():
