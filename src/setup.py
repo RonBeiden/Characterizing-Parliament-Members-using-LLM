@@ -84,5 +84,5 @@ def get_data_into_milvus():
                 collection = vector_db(quotes, collection_name=f"{kns_name}_{kns_number}")
             print(f"Collection {kns_name}_{kns_number} created successfully.")
 
-if __name__ == '__main__':
-    get_data_into_milvus()
+# if __name__ == '__main__':
+#     get_data_into_milvus()

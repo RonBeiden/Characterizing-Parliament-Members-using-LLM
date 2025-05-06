@@ -7,15 +7,24 @@ load_dotenv()  # Load environment variables from .env file
 def page_one():
     st.title("Choose a Knesset Member")
     
-    # Image files (replace with actual paths)
-    image_paths = [
-        "KNS_members_images/Miri_Regev.jpg",
-        "KNS_members_images/Yair_Lapid.jpg",
-        "KNS_members_images/Itamar_Ben_Gvir.jpg",
-        "KNS_members_images/Benjamin_Netanyahu.jpg",
-        "KNS_members_images/Benny_Gantz.jpg"
-    ]
-    names = ["Miri Regev", "Yair Lapid", "Itamar Ben Gvir", "Benjamin Netanyahu", "Benny Gantz"]
+    # Folder name relative to your working directory
+    folder_name = 'KNS_members_images'
+
+    # List to store image paths and names
+    image_paths = []
+    names = []
+
+    # Loop through all files in the folder and filter for .jpg files
+    for filename in os.listdir(folder_name):
+        if filename.endswith('.jpg'):
+            image_paths.append(f'{folder_name}/{filename}')
+
+    # Loop through all files in the folder 
+    for filename in os.listdir(folder_name):
+        if filename.endswith('.jpg'):
+            # Remove the extension and replace underscores with spaces
+            name = os.path.splitext(filename)[0].replace('_', ' ')
+            names.append(name)
     
     # Create equal columns based on the number of names
     cols = st.columns(len(names))

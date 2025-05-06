@@ -89,7 +89,7 @@ def retriever(query, demo):
 
 
 
-def retrive_quotes(KNS_name, knesset_number):
+def retrive_quotes(KNS_name, knesset_number=None):
 
     es = Elasticsearch(f'http://{elastic_ip}', basic_auth=(es_username, es_password), request_timeout=500)
     data_q =[]
@@ -147,7 +147,7 @@ def retrive_quotes(KNS_name, knesset_number):
     return data_q
 
 
-def retrieve_quotes_of_KNS_member(name, knesset_number):
+def retrieve_quotes_of_KNS_member(name, knesset_number=None):
     data = retrive_quotes(name, knesset_number)
     return data
 
@@ -161,9 +161,9 @@ def RAG(KNS_member, query):
     return results
 
 # if __name__ == '__main__':
-#    demo = vector_db(retrieve_quotes_of_KNS_member('מירי רגב', knesset_number="24"), collection_name="Miri_Regev_24")
+#    demo = vector_db(retrieve_quotes_of_KNS_member('מירי רגב'), collection_name="Miri_Regev")
 #    demo = vector_db(retrieve_quotes_of_KNS_member('יאיר לפיד'), collection_name="Yair_Lapid")
 #    demo = vector_db(retrieve_quotes_of_KNS_member('איתמר בן גביר'), collection_name="Itamar_Ben_Gvir")
 #    demo = vector_db(retrieve_quotes_of_KNS_member('בנימין נתניהו'), collection_name="Benjamin_Netanyahu")
 #    demo = vector_db(retrieve_quotes_of_KNS_member('בני גנץ'), collection_name="Benny_Gantz")
-   
+    

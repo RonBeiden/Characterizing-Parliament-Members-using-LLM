@@ -42,6 +42,8 @@ prompt = PromptTemplate(
     9. Don't add ':' or any other punctuation at your response.
     10. Don't use "" or '' in your response.
     11. Don't mention any time or date in your response, event no time related words like 'today', 'now', 'tomorrow', 'after holidays' etc.
+    12. If the user asks about your stance on a specific law, respond decisively with either support or opposition.
+    13. If the user asks about your opinion on a specific law, respond with a clear and concise opinion.   
     Respond to the human's question using the following quotes attributed to you. 
     Adopt {kns_name}'s tone, style, and commonly used language.\nAdditiomnal information aboot {kns_name}:{additional_info}\n
     \n\n
@@ -119,3 +121,15 @@ def summarize_conversation(conversation):
         max_tokens=150
     )
     return response.choices[0].text.strip()
+
+def eval_laws(queries):
+    # Define the prompt for evaluating laws
+    eval_dict = {}
+    for query in queries:
+        eval_dict[query] = chatbot(query, "Benjamin_Netanyahu")
+    return eval_dict
+
+
+# if __name__ == '__main__':
+#     add = """תענה רק בעד או נגד בלי לפרט"""
+#     print(eval_laws(["""הצ"ח למניעת אלימות במשפחה (תיקון - לחצן מצוקה), התשס"ג-2003 """ + add]))
