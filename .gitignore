@@ -75,3 +75,6 @@ out/
 
 # Milvus data directory
 Milvus_data/
+
+# Evaluation data
+*.csv

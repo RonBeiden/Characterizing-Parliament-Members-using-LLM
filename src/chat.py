@@ -121,15 +121,3 @@ def summarize_conversation(conversation):
         max_tokens=150
     )
     return response.choices[0].text.strip()
-
-def eval_laws(queries):
-    # Define the prompt for evaluating laws
-    eval_dict = {}
-    for query in queries:
-        eval_dict[query] = chatbot(query, "Benjamin_Netanyahu")
-    return eval_dict
-
-
-# if __name__ == '__main__':
-#     add = """תענה רק בעד או נגד בלי לפרט"""
-#     print(eval_laws(["""הצ"ח למניעת אלימות במשפחה (תיקון - לחצן מצוקה), התשס"ג-2003 """ + add]))
