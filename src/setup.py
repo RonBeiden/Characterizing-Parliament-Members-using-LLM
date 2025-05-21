@@ -84,5 +84,21 @@ def get_data_into_milvus():
                 collection = vector_db(quotes, collection_name=f"{kns_name}_{kns_number}")
             print(f"Collection {kns_name}_{kns_number} created successfully.")
 
-# if __name__ == '__main__':
-#     get_data_into_milvus()
+def get_data_into_milvus_no_kns_num():
+    names, names_hebrew = get_kns_names_and_hebrew()
+    print(f"Names: {names}")
+    for name, name_hebrew in zip(names, names_hebrew):
+        print(f"Processing {name}...")
+        if " " in name:
+            kns_name = name.replace(" ", "_")
+        print(f"Processing {name_hebrew} ...")
+        quotes = retrieve_quotes_of_KNS_member(name_hebrew, knesset_number=None)
+        if not quotes:
+            continue
+        else:
+            collection = vector_db(quotes, collection_name=f"{kns_name}")
+        print(f"Collection {kns_name} created successfully.")
+
+
+if __name__ == '__main__':
+    get_data_into_milvus_no_kns_num()
