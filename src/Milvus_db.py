@@ -160,6 +160,9 @@ def RAG(KNS_member, query):
     results = retriever(query, KNS_member)
     return results
 
+def collection_exists(collection_name):
+    return utility.has_collection(collection_name)
+
 # if __name__ == '__main__':
 #    demo = vector_db(retrieve_quotes_of_KNS_member('מירי רגב'), collection_name="Miri_Regev")
 #    demo = vector_db(retrieve_quotes_of_KNS_member('יאיר לפיד'), collection_name="Yair_Lapid")

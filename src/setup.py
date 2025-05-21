@@ -89,6 +89,9 @@ def get_data_into_milvus_no_kns_num():
     print(f"Names: {names}")
     for name, name_hebrew in zip(names, names_hebrew):
         print(f"Processing {name}...")
+        if collection_exists(name):
+            print(f"Collection for {name} already exists. Skipping...")
+            continue
         if " " in name:
             kns_name = name.replace(" ", "_")
         print(f"Processing {name_hebrew} ...")
