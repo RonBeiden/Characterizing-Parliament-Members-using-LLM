@@ -27,7 +27,7 @@ def get_additional_info(kns_name):
                           'DATABASE=KNS_Description;'
                           'Trusted_Connection=yes')
     cursor = conn.cursor()
-    query = "SELECT [Description] FROM kns_history WHERE KNS_name = ?"
+    query = "SELECT [description] FROM [kns_members] WHERE KNS_name = ?"
     cursor.execute(query, kns_name)
     rows = cursor.fetchall()
     descriptions = [row[0] for row in rows]  
@@ -88,12 +88,12 @@ def get_data_into_milvus_no_kns_num():
     names, names_hebrew = get_kns_names_and_hebrew()
     print(f"Names: {names}")
     for name, name_hebrew in zip(names, names_hebrew):
-        print(f"Processing {name}...")
-        if collection_exists(name):
-            print(f"Collection for {name} already exists. Skipping...")
-            continue
+        print(f"Processing {name}...")  
         if " " in name:
             kns_name = name.replace(" ", "_")
+        if collection_exists(kns_name):
+            print(f"Collection for {kns_name} already exists. Skipping...")
+            continue
         print(f"Processing {name_hebrew} ...")
         quotes = retrieve_quotes_of_KNS_member(name_hebrew, knesset_number=None)
         if not quotes:
