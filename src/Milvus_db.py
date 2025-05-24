@@ -36,7 +36,7 @@ def vector_db(docs, collection_name="demo"):
 
     index_params = {
         "index_type": "IVF_FLAT",
-        "metric_type": "COSINE",
+        "metric_type": "IP",
         "params": {"nlist": 128}
     }
 
@@ -74,7 +74,7 @@ def retriever(query, demo):
 
     # Encode the query and perform a search on the collection
     query_embedding = model.encode(query).tolist()
-    search_params = {"metric_type": "COSINE", "params": {"nprobe": 10}}
+    search_params = {"metric_type": "IP", "params": {"nprobe": 10}}
     results = demo.search([query_embedding], "vector", param=search_params, limit=10, output_fields=["id", "content"])
 
     # Fetch detailed content of the results
@@ -131,7 +131,7 @@ def retrive_quotes(KNS_name, knesset_number=None):
         }
 
     # resp = es.search(index="all_features_sentences", body=query, scroll="2m", size=4000)
-    resp = es.search(index="all_features_sentences", body=query, size=8000)
+    resp = es.search(index="all_features_sentences", body=query, size=100)
     hits = resp['hits']['hits']
 
     for hit in hits:
@@ -160,10 +160,12 @@ def RAG(KNS_member, query):
     results = retriever(query, KNS_member)
     return results
 
+def collection_exists(collection_name):
+    return utility.has_collection(collection_name)
+
 # if __name__ == '__main__':
 #    demo = vector_db(retrieve_quotes_of_KNS_member('מירי רגב'), collection_name="Miri_Regev")
 #    demo = vector_db(retrieve_quotes_of_KNS_member('יאיר לפיד'), collection_name="Yair_Lapid")
 #    demo = vector_db(retrieve_quotes_of_KNS_member('איתמר בן גביר'), collection_name="Itamar_Ben_Gvir")
 #    demo = vector_db(retrieve_quotes_of_KNS_member('בנימין נתניהו'), collection_name="Benjamin_Netanyahu")
 #    demo = vector_db(retrieve_quotes_of_KNS_member('בני גנץ'), collection_name="Benny_Gantz")
-    

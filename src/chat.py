@@ -16,7 +16,9 @@ Rephrase_prompt = PromptTemplate(
         1. Maintain the original intent of the user's query.  
         3. Ensure the rephrased query is in Hebrew.  
         4. Avoid adding any unnecessary details or assumptions.  
-        5. Use a formal and professional tone.  
+        5. Use a formal and professional tone.
+        
+        VERY IMPORTANT: If the user asked answer בעד או נגד. Don't add it to the rephrased query!! delete it from the rephrased query.
 
         Context: {context}  
         The Knesset member name: {kns_name}
@@ -68,7 +70,10 @@ conversation = LLMChain(
 )
 
 def chatbot(user_input, kns_name):
-    additional_info = get_additional_info(kns_name[:-3])
+    if '_' in kns_name:
+        kns_name = kns_name.replace("_", " ")
+    print(kns_name)
+    additional_info = get_additional_info(kns_name)
     if " " in kns_name:
         kns_name = kns_name.replace(" ", "_")
     KNS_collection = get_and_load_collection(kns_name)
@@ -79,7 +84,7 @@ def chatbot(user_input, kns_name):
     question_for_tavily = conversation_for_Tavily.run(
         human_input=user_input,
         context=context,
-        kns_name=kns_name[:-3],
+        kns_name=kns_name,
         additional_info=additional_info,
         chat_history=memory.load_memory_variables({}).get("chat_history", ""),
     )
@@ -87,7 +92,7 @@ def chatbot(user_input, kns_name):
 
     tavily_client = TavilyClient(api_key=os.getenv("TAVILY_API_KEY"))
     # Perform the search using Tavily
-    response = tavily_client.search(question_for_tavily, include_answer=True)
+    response = tavily_client.search(question_for_tavily,search_depth="advanced", include_answer="advanced")
 
     # Use the response from Tavily to get the final answer
     Tavily_answer = response['answer']
@@ -104,13 +109,16 @@ def chatbot(user_input, kns_name):
     response = conversation.run(
         human_input=user_input,
         context=context,
-        kns_name=kns_name[:-3],
+        kns_name=kns_name,
         additional_info=additional_info,
         chat_history=memory.load_memory_variables({}).get("chat_history", ""),
     )
     
     memory.save_context({"human_input": user_input}, {"output": response})
     return response
+
+def clear_memory():
+    memory.clear()
 
 # Summarize conversation function
 def summarize_conversation(conversation):
@@ -121,15 +129,3 @@ def summarize_conversation(conversation):
         max_tokens=150
     )
     return response.choices[0].text.strip()
-
-def eval_laws(queries):
-    # Define the prompt for evaluating laws
-    eval_dict = {}
-    for query in queries:
-        eval_dict[query] = chatbot(query, "Benjamin_Netanyahu")
-    return eval_dict
-
-
-# if __name__ == '__main__':
-#     add = """תענה רק בעד או נגד בלי לפרט"""
-#     print(eval_laws(["""הצ"ח למניעת אלימות במשפחה (תיקון - לחצן מצוקה), התשס"ג-2003 """ + add]))
