@@ -77,5 +77,3 @@ out/
 Milvus_data/
 volumes/
 
-# Evaluation data
-*.csv
