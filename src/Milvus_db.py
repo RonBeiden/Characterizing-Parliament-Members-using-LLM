@@ -131,7 +131,7 @@ def retrive_quotes(KNS_name, knesset_number=None):
         }
 
     # resp = es.search(index="all_features_sentences", body=query, scroll="2m", size=4000)
-    resp = es.search(index="all_features_sentences", body=query, size=100)
+    resp = es.search(index="all_features_sentences", body=query, size=8000)
     hits = resp['hits']['hits']
 
     for hit in hits:
