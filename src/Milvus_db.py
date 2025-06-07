@@ -131,7 +131,7 @@ def retrive_quotes(KNS_name, knesset_number=None):
         }
 
     # resp = es.search(index="all_features_sentences", body=query, scroll="2m", size=4000)
-    resp = es.search(index="all_features_sentences", body=query, size=8000)
+    resp = es.search(index="all_features_sentences", body=query, size=100)
     hits = resp['hits']['hits']
 
     for hit in hits:
@@ -162,10 +162,3 @@ def RAG(KNS_member, query):
 
 def collection_exists(collection_name):
     return utility.has_collection(collection_name)
-
-# if __name__ == '__main__':
-#    demo = vector_db(retrieve_quotes_of_KNS_member('מירי רגב'), collection_name="Miri_Regev")
-#    demo = vector_db(retrieve_quotes_of_KNS_member('יאיר לפיד'), collection_name="Yair_Lapid")
-#    demo = vector_db(retrieve_quotes_of_KNS_member('איתמר בן גביר'), collection_name="Itamar_Ben_Gvir")
-#    demo = vector_db(retrieve_quotes_of_KNS_member('בנימין נתניהו'), collection_name="Benjamin_Netanyahu")
-#    demo = vector_db(retrieve_quotes_of_KNS_member('בני גנץ'), collection_name="Benny_Gantz")
