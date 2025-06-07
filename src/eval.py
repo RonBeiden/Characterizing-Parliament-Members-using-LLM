@@ -41,8 +41,8 @@ def eval_laws_to_full_kns(query, name):
     clear_memory()
 
 def eval_laws_from_csv(file_path, description):
-    file_path_abs = get_abs_path(os.path.join("..", "const", file_path))
-    description_path_abs = get_abs_path(os.path.join("..", "const", description))
+    file_path_abs = get_abs_path(os.path.join("..", "eval", "laws", file_path))
+    description_path_abs = get_abs_path(os.path.join("..", "eval", "laws", description))
     
     df = pd.read_csv(file_path_abs)
     kns_names = df["english_name"].tolist()
@@ -70,9 +70,15 @@ def eval_laws_from_csv(file_path, description):
     eval_df.to_csv(output_path, index=False, encoding='utf-8-sig')
     eval_dict.clear()
 
-if __name__ == '__main__':
-    law = "חוק לתיקון פקודת המשטרה (מס' 37)" 
-    file_path = law + ".csv"
-    description = law + ".txt"
-    eval_laws_from_csv(file_path, description)
+# if __name__ == '__main__':
+    # 1: law = "חוק לתיקון פקודת המשטרה (מס' 37)"
+    # 2: law = "חוק-יסוד השפיטה (תיקון מס' 4)"
+    # 3: law = "חוק-יסוד הממשלה (תיקון מס' 11)"
+    # laws = ["חוק יישום תוכנית ההתנתקות תיקון מס 7 התשפג 2023"]
+    # # Example usage
+    # for law in laws:
+    #     file_path = law + ".csv"
+    #     description = law + ".txt"
+    #     eval_laws_from_csv(file_path, description)
+    #     time.sleep(7)
     

@@ -103,5 +103,5 @@ def get_data_into_milvus_no_kns_num():
         print(f"Collection {kns_name} created successfully.")
 
 
-if __name__ == '__main__':
-    get_data_into_milvus_no_kns_num()
+# if __name__ == '__main__':
+#     get_data_into_milvus()
