@@ -131,7 +131,7 @@ def retrive_quotes(KNS_name, knesset_number=None):
         }
 
     # resp = es.search(index="all_features_sentences", body=query, scroll="2m", size=4000)
-    resp = es.search(index="all_features_sentences", body=query, size=100)
+    resp = es.search(index="all_features_sentences", body=query, size=1000)
     hits = resp['hits']['hits']
 
     for hit in hits:
@@ -152,9 +152,20 @@ def retrieve_quotes_of_KNS_member(name, knesset_number=None):
     return data
 
 def get_and_load_collection(name):
-    KNS_member = Collection(name)
-    KNS_member.load()
-    return KNS_member
+    from pymilvus import Collection
+
+    if not utility.has_collection(name):
+        raise ValueError(f"Collection '{name}' does not exist in Milvus.")
+
+    print(f"[INFO] Loading collection: {name}")
+    try:
+        collection = Collection(name)
+        collection.load()
+        print(f"[INFO] Collection '{name}' loaded successfully.")
+        return collection
+    except Exception as e:
+        print(f"[ERROR] Failed to load collection '{name}': {e}")
+        raise
 
 def RAG(KNS_member, query):
     results = retriever(query, KNS_member)

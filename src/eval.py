@@ -70,15 +70,12 @@ def eval_laws_from_csv(file_path, description):
     eval_df.to_csv(output_path, index=False, encoding='utf-8-sig')
     eval_dict.clear()
 
-# if __name__ == '__main__':
-    # 1: law = "חוק לתיקון פקודת המשטרה (מס' 37)"
-    # 2: law = "חוק-יסוד השפיטה (תיקון מס' 4)"
-    # 3: law = "חוק-יסוד הממשלה (תיקון מס' 11)"
-    # laws = ["חוק יישום תוכנית ההתנתקות תיקון מס 7 התשפג 2023"]
-    # # Example usage
-    # for law in laws:
-    #     file_path = law + ".csv"
-    #     description = law + ".txt"
-    #     eval_laws_from_csv(file_path, description)
-    #     time.sleep(7)
+if __name__ == '__main__':
+    laws = ["חוק יישום תוכנית ההתנתקות תיקון מס 7 התשפג 2023"]
+    # Example usage
+    for law in laws:
+        file_path = law + ".csv"
+        description = law + ".txt"
+        eval_laws_from_csv(file_path, description)
+        time.sleep(7)
     

@@ -9,6 +9,7 @@ from langchain.chat_models import ChatOpenAI
 from Milvus_db import *
 from dotenv import load_dotenv
 import pyodbc
+from pymilvus import drop_collection, has_collection
 
 load_dotenv()
 
@@ -102,6 +103,23 @@ def get_data_into_milvus_no_kns_num():
             collection = vector_db(quotes, collection_name=f"{kns_name}")
         print(f"Collection {kns_name} created successfully.")
 
+def delete_kns_collections_no_kns_num():
+    names, names_hebrew = get_kns_names_and_hebrew()
+    print(f"Names: {names}")
+    
+    for name, name_hebrew in zip(names, names_hebrew):
+        print(f"Processing {name}...")
+        kns_name = name.replace(" ", "_") if " " in name else name
+
+        if not has_collection(kns_name):
+            print(f"Collection {kns_name} does not exist. Skipping...")
+            continue
+
+        try:
+            drop_collection(kns_name)
+            print(f"Collection {kns_name} deleted successfully.")
+        except Exception as e:
+            print(f"Failed to delete collection {kns_name}: {e}")
 
 # if __name__ == '__main__':
-#     get_data_into_milvus()
+#     get_data_into_milvus_no_kns_num()

@@ -70,13 +70,17 @@ conversation = LLMChain(
 )
 
 def chatbot(user_input, kns_name):
+    if " " in kns_name:
+        kns_name = kns_name.replace(" ", "_")
+    print("Getting KNS collection...")
+    KNS_collection = get_and_load_collection(kns_name)
+    print("Got KNS collection")
+    if kns_name[-1].isdigit():
+        kns_name = kns_name[:-3]
     if '_' in kns_name:
         kns_name = kns_name.replace("_", " ")
     print(kns_name)
     additional_info = get_additional_info(kns_name)
-    if " " in kns_name:
-        kns_name = kns_name.replace(" ", "_")
-    KNS_collection = get_and_load_collection(kns_name)
     print(additional_info)
     context = RAG(KNS_member=KNS_collection, query=user_input)
     
@@ -129,3 +133,10 @@ def summarize_conversation(conversation):
         max_tokens=150
     )
     return response.choices[0].text.strip()
+
+# if __name__ == "__main__":
+#     # This is just for testing purposes, you can remove it when integrating into your app
+#     user_input = "איך המדינה תראה אחרי המלחמה?"
+#     kns_name = "Yair Lapid"
+#     print(chatbot(user_input, kns_name))
+#     clear_memory()
