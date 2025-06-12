@@ -82,8 +82,19 @@ def chatbot(user_input, kns_name):
     print(kns_name)
     additional_info = get_additional_info(kns_name)
     print(additional_info)
-    context = RAG(KNS_member=KNS_collection, query=user_input)
-    
+    try:
+        context = RAG(KNS_member=KNS_collection, query=user_input)
+    except Exception as e:
+        try:
+            results = KNS_collection.query(
+            expr="id >= 0", 
+            output_fields=["content"]
+            )
+            results = [r["content"] for r in results]
+            context = results
+        except Exception as e:
+            print(f"Error retrieving context: {e}")
+            context = "No relevant information found. based the answer on your knowledge and the Knesset member's background and the Tavily answer."
 
     question_for_tavily = conversation_for_Tavily.run(
         human_input=user_input,
@@ -132,11 +143,4 @@ def summarize_conversation(conversation):
         prompt=summary_prompt,
         max_tokens=150
     )
-    return response.choices[0].text.strip()
-
-# if __name__ == "__main__":
-#     # This is just for testing purposes, you can remove it when integrating into your app
-#     user_input = "איך המדינה תראה אחרי המלחמה?"
-#     kns_name = "Yair Lapid"
-#     print(chatbot(user_input, kns_name))
-#     clear_memory()
+    return response.choices[0].text.strip(

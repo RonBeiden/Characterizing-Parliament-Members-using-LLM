@@ -37,6 +37,8 @@ def get_abs_path(relative_path):
     return os.path.join(base_path, relative_path)
 
 def eval_laws_to_full_kns(query, name):
+    if name in eval_dict:
+        return
     eval_dict[name] = chatbot(query, name)
     clear_memory()
 
@@ -61,7 +63,11 @@ def eval_laws_from_csv(file_path, description):
     kns_names = kns_names
     for name in kns_names:
         print(f"Evaluating {name}...")
-        if not collection_exists(name):
+        try:
+            if not collection_exists(name):
+                continue
+        except Exception as e:
+            print(f"Error checking collection for {name}: {e}")
             continue
         eval_laws_to_full_kns(query, name)
         time.sleep(1)
@@ -70,12 +76,12 @@ def eval_laws_from_csv(file_path, description):
     eval_df.to_csv(output_path, index=False, encoding='utf-8-sig')
     eval_dict.clear()
 
-if __name__ == '__main__':
-    laws = ["חוק יישום תוכנית ההתנתקות תיקון מס 7 התשפג 2023"]
-    # Example usage
-    for law in laws:
-        file_path = law + ".csv"
-        description = law + ".txt"
-        eval_laws_from_csv(file_path, description)
-        time.sleep(7)
+# if __name__ == '__main__':
+#     laws = ["הצעת חוק-יסוד הממשלה (תיקון מס' 13)"]
+#     # Example usage
+#     for law in laws:
+#         file_path = law + ".csv"
+#         description = law + ".txt"
+#         eval_laws_from_csv(file_path, description)
+#         time.sleep(7)
     
