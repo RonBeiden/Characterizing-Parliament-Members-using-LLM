@@ -143,4 +143,4 @@ def summarize_conversation(conversation):
         prompt=summary_prompt,
         max_tokens=150
     )
-    return response.choices[0].text.strip(
+    return response.choices[0].text.strip()
