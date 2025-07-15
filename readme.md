@@ -110,11 +110,107 @@ cp .env.example .env
 docker-compose up -d
 ```
 
+#### Milvus Standalone Docker Setup
+
+The project uses Milvus standalone mode with the following architecture:
+
+- **Milvus Standalone**: Main vector database service (port 19530)
+- **etcd**: Metadata storage and service discovery
+- **MinIO**: Object storage for vector data and logs
+
+**Docker Compose Services:**
+
+1. **etcd Container**:
+   - Image: `quay.io/coreos/etcd:v3.5.0`
+   - Purpose: Stores Milvus metadata and handles service coordination
+   - Data persistence: `./volumes/etcd`
+
+2. **MinIO Container**:
+   - Image: `minio/minio:RELEASE.2020-12-03T00-03-10Z`
+   - Purpose: Object storage backend for vector data
+   - Default credentials: `minioadmin/minioadmin`
+   - Data persistence: `./volumes/minio`
+
+3. **Milvus Standalone Container**:
+   - Image: `milvusdb/milvus:latest
+   - Purpose: Main vector database service
+   - Port mapping: `19530:19530`
+   - Data persistence: `./volumes/milvus`
+
+**Volume Management:**
+```bash
+# Check container status
+docker-compose ps
+
+# View logs
+docker-compose logs milvus-standalone
+
+# Stop services
+docker-compose down
+
+# Remove volumes (WARNING: This deletes all data)
+docker-compose down -v
+```
+
+**Connection Configuration:**
+The application connects to Milvus using:
+- Host: `localhost`
+- Port: `19530`
+- No authentication required in standalone mode
+
 5. **Set up SQL Server database**
 
 - Configure connection string in `src/setup.py`
+- Database schema: `KNS_Description` with table `kns_members` containing columns: `KNS_name`, `kns_name_hebrew`, `description`, `knesset_seat`
+- **Database CSV Import**:  
+    A CSV file containing all the data required for the SQL Server database is available at `db_csv/final_db.csv`. You can use this file to import the necessary data into SSMS (SQL Server Management Studio).
 
 ## 🚀 Usage
+
+### Populating Milvus Vector Database with Knesset Member Quotes
+
+Before using the chat application, you need to populate the Milvus vector database with Knesset member quotes. The system provides functions to automatically retrieve quotes from Elasticsearch and insert them into Milvus collections.
+
+#### Available Functions in `setup.py`:
+
+1. **`get_data_into_milvus()`** - Creates separate collections for each Knesset member per Knesset number
+   - Collection naming format: `{member_name}_{knesset_number}`
+   - Example: `Benjamin_Netanyahu_25`, `Miri_Regev_24`
+
+2. **`get_data_into_milvus_no_kns_num()`** - Creates single collections per member across all Knesset terms
+   - Collection naming format: `{member_name}`
+   - Example: `Benjamin_Netanyahu`, `Miri_Regev`
+
+#### Running the Data Population:
+
+```python
+# In Python console or script:
+from setup import get_data_into_milvus_no_kns_num
+
+# Populate all member collections (recommended approach)
+get_data_into_milvus_no_kns_num()
+```
+
+#### Data Flow Process:
+
+1. **Retrieve Member Names**: Gets all Knesset member names from SQL Server database
+2. **Fetch Quotes**: Uses `retrieve_quotes_of_KNS_member()` to get quotes from Elasticsearch
+3. **Clean Text**: Filters Hebrew text and removes sentences shorter than 30 characters
+4. **Generate Embeddings**: Creates vector embeddings using multilingual sentence transformer
+5. **Store in Milvus**: Inserts quotes and embeddings into named collections
+
+#### Collection Management:
+
+```python
+# Check if collection exists
+from Milvus_db import collection_exists
+if collection_exists("Benjamin_Netanyahu"):
+    print("Collection exists")
+
+# Delete collections if needed
+from setup import delete_kns_collections_no_kns_num
+delete_kns_collections_no_kns_num()
+```
 
 ### Running the Chat Application
 
@@ -124,12 +220,6 @@ streamlit run chat.py
 ```
 
 ## 🔧 Configuration
-
-### Supported Politicians
-
-- **Miri Regev**: Israeli politician, former Culture Minister
-- **Benjamin Netanyahu**: Israeli Prime Minister
-- **Extensible**: Add new politicians by processing their speech data
 
 ### Embedding Models
 
