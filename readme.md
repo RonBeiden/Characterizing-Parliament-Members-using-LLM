@@ -2,7 +2,7 @@
 
 ## Overview
 
-This project leverages Large Language Models (LLMs) to analyze and characterize Israeli Knesset (Parliament) members based on their speeches, voting patterns, and public statements. The system uses advanced Retrieval-Augmented Generation (RAG) techniques, embeddings, and vector databases to create AI personas that can respond in the style and voice of specific politicians, particularly focusing on members like Miri Regev and Benjamin Netanyahu.
+This project leverages Large Language Models (LLMs) to analyze and characterize Israeli Knesset (Parliament) members based on their speeches, voting patterns, and public statements. The system uses advanced Retrieval-Augmented Generation (RAG) techniques, embeddings, and vector databases to create AI personas that can respond in the style and voice of specific politicians.
 
 ## 🚀 Key Features
 
