@@ -216,7 +216,7 @@ delete_kns_collections_no_kns_num()
 
 ```bash
 cd src/
-streamlit run chat.py
+streamlit run main.py
 ```
 
 ## 🔧 Configuration
